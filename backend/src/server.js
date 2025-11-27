@@ -7,6 +7,8 @@ import {connectDB} from "./lib/db.js";
 const app = express();
 const PORT = process.env.PORT
 
+app.use(express.json());
+
 app.get("/", (req, res) =>{
     res.send("Hello from backend");
 });
@@ -14,5 +16,5 @@ app.get("/", (req, res) =>{
 app.use("/api/auth", authRoutes);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    connectDB();
+    connectDB(); // calling the connectDB() method in db.js to make database connection
 })
