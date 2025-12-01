@@ -3,6 +3,8 @@ import "dotenv/config";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth_route.js";
+import userRoutes from "./routes/user.route.js";
+
 import {connectDB} from "./lib/db.js";
 
 const app = express();
@@ -16,6 +18,8 @@ app.get("/", (req, res) =>{
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     connectDB(); // calling the connectDB() method in db.js to make database connection
