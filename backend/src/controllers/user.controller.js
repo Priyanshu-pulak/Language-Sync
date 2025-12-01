@@ -8,7 +8,7 @@ export async function getRecommendedUsers(req, res){
         const recommendedUsers = await User.find({
             $and:[
                 {_id: {$ne: currentUserId}}, // exclude current user
-                {_id: {$nin: currentUser.friend}}, // exclude current user's friends
+                {_id: {$nin: currentUser.friends}}, // exclude current user's friends
                 {isOnboarded: true}, // this is compulsory that the user must be onboarded if he won't be onboarded then his native language and learnig language we won't be able to find
             ],
         });
@@ -17,6 +17,18 @@ export async function getRecommendedUsers(req, res){
     }
     catch (error){
         console.error("Error in getRecommendedUsers controller", error.message);
+        res.status(500).json({message: "Internal Server Error"});
+    }
+}
+
+export async function getMyFriends(req, res) {
+    try {
+        const user = await User.findById(req.user.id).select("friends").populate("friends", "fullName profilePic nativeLanguage learningLanguage");
+    
+        res.status(200).json(user.friends);
+    }
+    catch (error){
+        console.error("Error in getMyFriends controller", error.message);
         res.status(500).json({message: "Internal Server Error"});
     }
 }
