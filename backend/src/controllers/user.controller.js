@@ -34,7 +34,7 @@ export async function getMyFriends(req, res) {
     }
 }
 
-export async function sendFrinedRequest(req, res){
+export async function sendFriendRequest(req, res){
     try{
         const myId = req.user.id;
         const {recipientId} = req.params;
