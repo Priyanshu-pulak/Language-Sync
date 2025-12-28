@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema(
             default: false,
         },
         
-        // if some users are freind with this user then their ids will get stored in the friends array
+        // if some users are freind with this user then their ids will get stored in the friends array not entire user objects
         friends: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -69,7 +69,7 @@ userSchema.pre(
     {
         // If password is not modified then we don't need to hash it again
         
-        if (!this.isModified("password")) return next();// is a callback function that tells Mongoose to proceed to the next middleware or complete the save operation. without calling next(), the save operation would hang indefinitely. 
+        if (!this.isModified("password")) return next();// is a callback function that tells Mongoose to proceed to the next middleware or complete the save operation. Without calling next(), the save operation would hang indefinitely. 
 
         try
         {
@@ -90,6 +90,7 @@ userSchema.methods.matchPassword = async function(enteredPassword){
     return isPasswordCorrect;
 }
 
+// Creating a Mongoose model from the schema
 const User = mongoose.model("User", userSchema);
 
 export default User;
