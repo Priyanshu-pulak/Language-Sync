@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 export async function signup(req, res)
 {
+    // STEP 1: Extract data from request body
     const {email, password, fullName} = req.body;
 
     try
@@ -35,10 +36,11 @@ export async function signup(req, res)
         const idx = Math.floor(Math.random() * 100) + 1; // [1, 100]
         const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
 
+        // Create new user in MongoDB
         const newUser = await User.create({
             email,
             fullName,
-            password,
+            password, // Will be hashed by Mongoose in pre-save hook
             profilePic: randomAvatar,
         });
 
@@ -62,10 +64,11 @@ export async function signup(req, res)
         // distributed systems (no shared session store needed).
         // Secure – If configured correctly, it's safe and widely adopted.
         const token = jwt.sign(
-            {userId : newUser._id},
-            process.env.JWT_SECRET_KEY,
-            {expiresIn: "7d",
+            {userId : newUser._id}, // Payload (data to store in token)
+            process.env.JWT_SECRET_KEY, // Secret key for signing
+            {expiresIn: "7d", // Options (expires in 7 days)
         });
+        // Returns encrypted string like: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
         // The token in the cookie acts as proof that the user is logged in.
         // For every authenticated route, you check for this cookie, verify the JWT, and extract the userId.
@@ -73,10 +76,10 @@ export async function signup(req, res)
             "jwt",
             token,
             {
-                httpOnly: true, // prevent XSS attacks
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-                sameSite: "strict", // prevent CSRF attacks
-                secure: process.env.NODE_ENV === "production",
+                httpOnly: true, // JavaScript can't access (XSS protection)
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+                sameSite: "strict", // Only send cookie to same site (CSRF protection)
+                secure: process.env.NODE_ENV === "production", // HTTPS only in prod
             }
         );
 
