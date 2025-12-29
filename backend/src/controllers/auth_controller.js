@@ -105,10 +105,10 @@ export async function login(req, res){
         }
 
         const existingUser = await User.findOne({email});
-
-        const isPasswordCorrect = await existingUser.matchPassword(password);
+        if(!existingUser) return res.status(401).json({message: "Invalid email or password"});
         
-        if(!existingUser || !isPasswordCorrect) return res.status(401).json({message: "Invalid email or password"});
+        const isPasswordCorrect = await existingUser.matchPassword(password);
+        if(!isPasswordCorrect) return res.status(401).json({message: "Invalid email or password"});
         
         const token = jwt.sign(
             {userId : existingUser._id},
