@@ -8,9 +8,11 @@ router.post("/signup", signup);
 router.post("/login", login);    
 router.post("/logout", logout);
 
-router.post("/onboarding", protectRoute, onboard);
+// Apply authentication middleware to all routes below
+router.use(protectRoute); 
 
-router.get("/me", protectRoute, (req, res) => {
+router.post("/onboarding", onboard);
+router.get("/me", (req, res) => {
     res.status(200).json({
         success: true,
         user: req.user,
