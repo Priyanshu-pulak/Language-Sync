@@ -146,6 +146,7 @@ export function logout(req, res){
 export async function onboard(req, res){
     try
     {
+        // Getting user id from req.user which we have set in protectRoute which is authentication middleware.
         const userId = req.user._id;
         const {fullName, bio, nativeLanguage, learningLanguage, location} = req.body;
 
@@ -158,23 +159,24 @@ export async function onboard(req, res){
                     !nativeLanguage && "nativeLanguage",
                     !learningLanguage && "learningLanguage",
                     !location && "location",
-                ].filter(Boolean),
+                ].filter(Boolean), // remove false values, returns only missing fileds names
             });
         }
         
         const updatedUser = await User.findByIdAndUpdate(
-            userId,
+            userId, // find user by id
             {
                 ...req.body,
                 isOnboarded: true,
             },
-            {new: true}
+            {new: true} // Return updated user object
         );
 
         if(!updatedUser){
             return res.status(404).json({message: "User not found"});
         }
 
+        // Sync updated user info(name) with Stream
         try{
             await upsertStreamUser({
                 id: updatedUser._id.toString(),
