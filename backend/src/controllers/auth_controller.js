@@ -58,8 +58,7 @@ export async function signup(req, res)
             console.log("Error creating Stream user:", error);
         }
         // Why JWT is Used in Auth Systems
-        // Stateless authentication – You don’t need to store 
-        //                            sessions in the database.
+        // Stateless authentication – You don’t need to store sessions in the database.
         // Scalable – Works well for 
         // distributed systems (no shared session store needed).
         // Secure – If configured correctly, it's safe and widely adopted.
@@ -82,9 +81,10 @@ export async function signup(req, res)
                 secure: process.env.NODE_ENV === "production", // HTTPS only in prod
             }
         );
-
+        // Removing password & metadata field from user object before sending response
+        const { password: _password, __v, ...userResponse} = newUser.toObject();
         res.status(201).json({success: true, message:
-            "User created successfully", user: newUser
+            "User created successfully", user: userResponse
         });
     }
     catch (error)
@@ -126,8 +126,10 @@ export async function login(req, res){
                 secure: process.env.NODE_ENV === "production",
             }
         );
+        // Removing password from user object before sending response
+        const { password: _password, __v, ...userResponse} = existingUser.toObject();
 
-        res.status(200).json({success: true, message: "Login successful", user: existingUser});
+        res.status(200).json({success: true, message: "Login successful", user: userResponse});
     }
     catch (error)
     {
@@ -170,7 +172,7 @@ export async function onboard(req, res){
                 isOnboarded: true,
             },
             {new: true} // Return updated user object
-        );
+        ).select("-password -__v"); // Exclude password & metadata field
 
         if(!updatedUser){
             return res.status(404).json({message: "User not found"});
