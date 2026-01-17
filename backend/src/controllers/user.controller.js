@@ -37,7 +37,7 @@ export async function getMyFriends(req, res) {
 export async function sendFriendRequest(req, res){
     try{
         const myId = req.user.id;
-        const {recipientId} = req.params;
+        const { id: recipientId} = req.params;
 
         if(myId == recipientId){
             return res.status(400).json({message: "You can't send friend request to yourself"});
