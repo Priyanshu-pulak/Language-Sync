@@ -33,8 +33,8 @@ export async function signup(req, res)
             return res.status(400).json({message: "Email already exists, please use a diffrent one"});
         }
 
-        const idx = Math.floor(Math.random() * 100) + 1; // [1, 100]
-        const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
+        const idx = Math.floor(Math.random() * 70) + 1; // [1, 70]
+        const randomAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${idx}`;
 
         // Create new user in MongoDB
         const newUser = await User.create({
