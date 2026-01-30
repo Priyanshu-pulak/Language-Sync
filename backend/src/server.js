@@ -16,7 +16,9 @@ const PORT = process.env.PORT
 const __dirname = path.resolve();
 
 app.use(cors({
-    origin:"http://localhost:5173", // frontend url
+    origin: process.env.NODE_ENV === "production" 
+        ? "https://language-sync.onrender.com" 
+        : "http://localhost:5173",
     credentials: true, // allow frontend to send cookies
 }))
 app.use(express.json());
